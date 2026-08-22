@@ -114,29 +114,74 @@ private:
 
 public:
     // Constructor
-    Doctor(int did, string n, Department d);
+    Doctor(int did, string n, Department d) : id(did), name(n), department(d){}
 
     // ========== ORIGINAL FEATURES ========== //
 
-    void addAppointment(int patientId);
-    int seePatient();
-
-    int getId();
-    string getName();
-    string getDepartment();
-
-
+    void addAppointment(int patientId){
+        appointmentQueue.push(patientId); }
+    int seePatient() {
+        if (appointmentQueue.empty()) {
+            return -1;
+        }
+        int frontPatient = appointmentQueue.front();
+        appointmentQueue.pop();
+        return frontPatient;
+    }
+    int getId(){
+        return id; }
+    string getName(){
+        return name; }
+    string getDepartment(){
+           return departmentToString(department); }
     // ========== NEW FEATURES ========== //
 
     // Display waiting patients
-    void displayAppointments();
+    void displayAppointments(){
+        queue<int> tempQueue = appointmentQueue;
+        while (!tempQueue.empty()) {
+            cout << tempQueue.front() << endl;
+            tempQueue.pop();
+        }
+    }
+    
 
     // Cancel appointment
-    void cancelAppointment(int patientId);
+    void cancelAppointment(int patientId) {
+        if (appointmentQueue.empty()) {
+            cout << "No appointments available." << endl;
+            return;
+        }
+
+        queue<int> tempQueue;
+        bool found = false;
+
+        while (!appointmentQueue.empty()) {
+            int current = appointmentQueue.front();
+            appointmentQueue.pop();
+
+            if (current == patientId && !found) {
+                found = true;
+            } else {
+                tempQueue.push(current);
+            }
+        }
+
+        appointmentQueue = tempQueue;
+
+        if (found) {
+            cout << "Appointment cancelled successfully." << endl;
+        } else {
+            cout << "Appointment not found." << endl;
+        }
+    }
 
     // Number of waiting patients
-    int getAppointmentCount();
+    int getAppointmentCount() {
+        return appointmentQueue.size();
+    }
 };
+    
 
 
 // ========== HOSPITAL CLASS ========== //
