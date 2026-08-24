@@ -96,7 +96,7 @@ public:
 
     }
 
-    //done 33333
+    //done 
     void dischargePatient() {
         if (!isAdmitted) {
             cout << "Patient is not currently admitted" << endl;
@@ -139,11 +139,23 @@ public:
             temp.pop();
         }
     }
+    //done
+    int getId() {
+        return id;
+    }
+    string getName() {
+        return name;
+    }
 
-    int getId();
-    string getName();
-
-    bool getAdmissionStatus();
+    //done
+    bool getAdmissionStatus() {
+        if (isAdmitted) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 
     // ========== NEW FEATURES ========== //
@@ -153,24 +165,62 @@ public:
     void displayPendingTests() {
         queue<string> temp = testQueue;
         while (!temp.empty()) {
-            cout <<" " << temp.front() << endl;
+            cout <<"- " << temp.front() << endl;
             temp.pop();
         }
     }
 
     // Prescriptions
-    void addPrescription(string medicine);
-    void displayPrescriptions();
+
+    //done
+    void addPrescription(string medicine) {
+        prescriptions.push_back(medicine);
+        addMedicalRecord("Prescription added: " + medicine);
+        addBill(100);
+
+    }
+
+    //done
+    void displayPrescriptions() {
+        if (prescriptions.empty()) {
+            cout << "No prescriptions." << endl;
+            return;
+        }
+        else {
+            for (string md : prescriptions) {
+                cout << "- " << md << endl;
+            }
+        }
+    }
 
     // Billing
-    void addBill(double amount);
-    double getBill();
-    void displayBill();
+    //done
+    void addBill(double amount) {
+        bill += amount;
+
+    }
+    double getBill() {
+        return bill;
+    }
+    void displayBill() {
+        cout << " patient ID: " << id << endl;
+        cout << "patient Name: " << name << endl;
+        cout << "Total bill : " << bill << endl;
+    }
 
     // Additional Getters
-    int getAge();
-    string getContact();
-    RoomType getRoomType();
+
+    //done
+    int getAge() {
+        return age;
+    }
+
+    string getContact() {
+        return contact;
+    }
+    RoomType getRoomType() {
+        return roomType;
+    }
 };
 
 
