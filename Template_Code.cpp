@@ -61,19 +61,84 @@ private:
 
 public:
     // Constructor
-    Patient(int pid, string n, int a, string c);
+    Patient(int pid, string n, int a, string c) {
+        id=pid ;
+        name = n;
+        age = a;
+        contact = c;
+        isAdmitted = false;
+        bill = 0.0;
+    }
 
     // ========== ORIGINAL FEATURES ========== //
 
-    void admitPatient(RoomType type);
-    void dischargePatient();
+    //done
+    void admitPatient(RoomType type) {
+        if (isAdmitted) {
+            cout << "Patient is already admitted" << endl;
+            return;
+        }
+        isAdmitted = true;
+        roomType = type;
+        addMedicalRecord("Patient admitted to hospital");
 
-    void addMedicalRecord(string record);
+        switch (type)
+        {
+        case GENERAL_WARD:addBill(500);
+            break;
+        case ICU:addBill(3,000);
+            break;
+        case PRIVATE_ROOM:addBill(1500);
+            break;
+        case SEMI_PRIVATE:addBill(1000);
+            break;
+        }
 
-    void requestTest(string testName);
-    string performTest();
+    }
 
-    void displayHistory();
+    //done 33333
+    void dischargePatient() {
+        if (!isAdmitted) {
+            cout << "Patient is not currently admitted" << endl;
+            return;
+        }
+        isAdmitted = false;
+        addMedicalRecord("Patient discharged from hospital");
+
+    }
+
+    //done
+    void addMedicalRecord(string record) {
+        medicalHistory.push(record);
+    }
+
+    //done
+    void requestTest(string testName) {
+        testQueue.push(testName);
+        addMedicalRecord("Test requested : " + testName);
+
+
+    }
+    string performTest() {
+        if (testQueue.empty()) {
+            return "No tests pending";
+        }
+        string testName = testQueue.front();
+        testQueue.pop();
+        addMedicalRecord("Test performed: " + testName);
+        addBill(300);
+        return testName;
+
+    }
+
+    //done
+    void displayHistory() {
+        stack<string> temp = medicalHistory;
+        while (!temp.empty()) {
+            cout << temp.top() << endl;
+            temp.pop();
+        }
+    }
 
     int getId();
     string getName();
@@ -84,7 +149,14 @@ public:
     // ========== NEW FEATURES ========== //
 
     // Medical Tests
-    void displayPendingTests();
+    //done
+    void displayPendingTests() {
+        queue<string> temp = testQueue;
+        while (!temp.empty()) {
+            cout <<" " << temp.front() << endl;
+            temp.pop();
+        }
+    }
 
     // Prescriptions
     void addPrescription(string medicine);
