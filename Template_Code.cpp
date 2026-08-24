@@ -38,7 +38,25 @@ public:
     // Higher severity = higher priority
     bool operator<(const EmergencyCase& other) const;
 };
+// Constructor
+EmergencyCase::EmergencyCase(int pid, int s) {
+    patientId = pid;
+    severity = s;
+}
 
+// Getters
+int EmergencyCase::getPatientId() const {
+    return patientId;
+}
+
+int EmergencyCase::getSeverity() const {
+    return severity;
+}
+
+// Operator < for priority_queue comparison
+bool EmergencyCase::operator<(const EmergencyCase& other) const {
+    return severity < other.severity;
+}
 
 // ========== PATIENT CLASS ========== //
 class Patient {
