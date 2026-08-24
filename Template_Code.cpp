@@ -405,18 +405,6 @@ public:
     void displayStatistics();
 };
 
-// ========== EMERGENCYCASE (if not yet provided by Task 2) ========== //
-// Coordinate with Doaa before including this block — skip if already implemented.
-EmergencyCase::EmergencyCase(int pid, int s) : patientId(pid), severity(s) {}
-
-int EmergencyCase::getPatientId() const { return patientId; }
-int EmergencyCase::getSeverity() const { return severity; }
-
-bool EmergencyCase::operator<(const EmergencyCase& other) const {
-    return severity < other.severity;
-}
-
-
 // ========== HOSPITAL: APPOINTMENT ROUTING ========== //
 
 void Hospital::bookAppointment(int doctorId, int patientId) {
