@@ -128,6 +128,26 @@ public:
         appointmentQueue.pop();
         return frontPatient;
     }
+    bool cancelAppointment(int patientId) {
+        if (appointmentQueue.empty()) return false;
+
+        queue<int> tempQueue;
+        bool found = false;
+
+        while (!appointmentQueue.empty()) {
+            int currentId = appointmentQueue.front();
+            appointmentQueue.pop();
+
+            if (currentId == patientId && !found) {
+                found = true;
+            } else {
+                tempQueue.push(currentId);
+            }
+        }
+
+        appointmentQueue = tempQueue;
+        return found;
+    }
     int getId(){
         return id; }
     string getName(){
