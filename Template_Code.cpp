@@ -486,6 +486,104 @@ public:
     void displayStatistics();
 };
 
+// ========== HOSPITAL: APPOINTMENT ROUTING ========== //
+
+void Hospital::bookAppointment(int doctorId, int patientId) {
+    Doctor* doc = findDoctor(doctorId);
+    if (doc == nullptr) {
+        cout << "Doctor with ID " << doctorId << " not found." << endl;
+        return;
+    }
+
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+
+    doc->addAppointment(patientId);
+    cout << "Appointment booked for patient " << patientId
+         << " with doctor " << doctorId << endl;
+}
+
+void Hospital::cancelAppointment(int doctorId, int patientId) {
+    Doctor* doc = findDoctor(doctorId);
+    if (doc == nullptr) {
+        cout << "Doctor with ID " << doctorId << " not found." << endl;
+        return;
+    }
+    doc->cancelAppointment(patientId);
+}
+
+void Hospital::doctorSeePatient(int doctorId) {
+    Doctor* doc = findDoctor(doctorId);
+    if (doc == nullptr) {
+        cout << "Doctor with ID " << doctorId << " not found." << endl;
+        return;
+    }
+
+    int patientId = doc->seePatient();
+    if (patientId == -1) {
+        cout << "No patients waiting." << endl;
+    } else {
+        cout << "Dr. " << doc->getName()
+             << " is now seeing patient " << patientId << endl;
+    }
+}
+
+
+// ========== HOSPITAL: STANDARD (FIFO) EMERGENCY QUEUE ========== //
+
+void Hospital::addEmergency(int patientId) {
+    emergencyQueue.push(patientId);
+}
+
+int Hospital::handleEmergency() {
+    if (emergencyQueue.empty()) {
+        cout << "No emergencies in queue." << endl;
+        return -1;
+    }
+
+    int patientId = emergencyQueue.front();
+    emergencyQueue.pop();
+    cout << "Handled emergency for patient: " << patientId << endl;
+    return patientId;
+}
+
+
+// ========== HOSPITAL: SEVERITY-BASED PRIORITY EMERGENCY QUEUE ========== //
+
+void Hospital::addPriorityEmergency(int patientId, int severity) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+
+    if (severity < 1 || severity > 5) {
+        cout << "Invalid severity level. Must be between 1 and 5." << endl;
+        return;
+    }
+
+    priorityEmergencyQueue.push(EmergencyCase(patientId, severity));
+    cout << "Emergency added with severity " << severity << endl;
+}
+
+int Hospital::handlePriorityEmergency() {
+    if (priorityEmergencyQueue.empty()) {
+        cout << "No priority emergencies." << endl;
+        return -1;
+    }
+
+    EmergencyCase top = priorityEmergencyQueue.top();
+    priorityEmergencyQueue.pop();
+
+    cout << "Handling patient " << top.getPatientId()
+         << " with severity " << top.getSeverity() << endl;
+
+    return top.getPatientId();
+}
+
 
 // ========== MAIN PROGRAM ========== //
 int main() {
