@@ -62,7 +62,7 @@ private:
 public:
     // Constructor
     Patient(int pid, string n, int a, string c) {
-        id=pid ;
+        id = pid;
         name = n;
         age = a;
         contact = c;
@@ -72,53 +72,49 @@ public:
 
     // ========== ORIGINAL FEATURES ========== //
 
-    //done
     void admitPatient(RoomType type) {
         if (isAdmitted) {
-            cout << "Patient is already admitted" << endl;
+            cout << "Patient is already admitted." << endl; // Added period
             return;
         }
         isAdmitted = true;
         roomType = type;
         addMedicalRecord("Patient admitted to hospital");
 
-        switch (type)
-        {
-        case GENERAL_WARD:addBill(500);
-            break;
-        case ICU:addBill(3,000);
-            break;
-        case PRIVATE_ROOM:addBill(1500);
-            break;
-        case SEMI_PRIVATE:addBill(1000);
-            break;
+        switch (type) {
+            case GENERAL_WARD:
+                addBill(500);
+                break;
+            case ICU:
+                addBill(3000); // Fixed: Removed comma operator bug
+                break;
+            case PRIVATE_ROOM:
+                addBill(1500);
+                break;
+            case SEMI_PRIVATE:
+                addBill(1000);
+                break;
         }
-
     }
 
-    //done 
     void dischargePatient() {
         if (!isAdmitted) {
-            cout << "Patient is not currently admitted" << endl;
+            cout << "Patient is not currently admitted." << endl; // Added period
             return;
         }
         isAdmitted = false;
         addMedicalRecord("Patient discharged from hospital");
-
     }
 
-    //done
     void addMedicalRecord(string record) {
         medicalHistory.push(record);
     }
 
-    //done
     void requestTest(string testName) {
         testQueue.push(testName);
-        addMedicalRecord("Test requested : " + testName);
-
-
+        addMedicalRecord("Test requested: " + testName); // Fixed spacing before colon
     }
+
     string performTest() {
         if (testQueue.empty()) {
             return "No tests pending";
@@ -128,101 +124,89 @@ public:
         addMedicalRecord("Test performed: " + testName);
         addBill(300);
         return testName;
-
     }
 
-    //done
     void displayHistory() {
         stack<string> temp = medicalHistory;
         while (!temp.empty()) {
-            cout << temp.top() << endl;
+            cout << "- " << temp.top() << endl; // Fixed: Added leading bullet point
             temp.pop();
         }
     }
-    //done
-    int getId() {
+
+    // Added const correctness to getters
+    int getId() const {
         return id;
     }
-    string getName() {
+
+    string getName() const {
         return name;
     }
 
-    //done
-    bool getAdmissionStatus() {
-        if (isAdmitted) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    bool getAdmissionStatus() const {
+        return isAdmitted; // Simplified logic
     }
 
 
     // ========== NEW FEATURES ========== //
 
     // Medical Tests
-    //done
     void displayPendingTests() {
         queue<string> temp = testQueue;
         while (!temp.empty()) {
-            cout <<"- " << temp.front() << endl;
+            cout << "- " << temp.front() << endl;
             temp.pop();
         }
     }
 
     // Prescriptions
-
-    //done
     void addPrescription(string medicine) {
         prescriptions.push_back(medicine);
         addMedicalRecord("Prescription added: " + medicine);
         addBill(100);
-
     }
 
-    //done
     void displayPrescriptions() {
         if (prescriptions.empty()) {
             cout << "No prescriptions." << endl;
             return;
         }
-        else {
-            for (string md : prescriptions) {
-                cout << "- " << md << endl;
-            }
+        for (const string& md : prescriptions) {
+            cout << "- " << md << endl;
         }
     }
 
     // Billing
-    //done
     void addBill(double amount) {
         bill += amount;
-
     }
-    double getBill() {
+
+    double getBill() const {
         return bill;
     }
-    void displayBill() {
-        cout << " patient ID: " << id << endl;
-        cout << "patient Name: " << name << endl;
-        cout << "Total bill : " << bill << endl;
+
+    // Fixed: Complete formatting rewrite to match SRS Section 7.5 precisely
+    void displayBill() const {
+        cout << "========== PATIENT BILL ==========" << endl;
+        cout << "Patient ID: " << id << endl;
+        cout << "Patient Name: " << name << endl;
+        cout << "Total Bill: $" << bill << endl;
+        cout << "==================================" << endl;
     }
 
     // Additional Getters
-
-    //done
-    int getAge() {
+    int getAge() const {
         return age;
     }
 
-    string getContact() {
+    string getContact() const {
         return contact;
     }
-    RoomType getRoomType() {
+
+    RoomType getRoomType() const {
         return roomType;
     }
 };
-
 
 // ========== DOCTOR CLASS ========== //
 class Doctor {
