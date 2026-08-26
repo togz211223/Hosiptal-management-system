@@ -114,12 +114,14 @@ private:
 
 public:
     // Constructor
-    Doctor(int did, string n, Department d) : id(did), name(n), department(d){}
+    Doctor(int did, string n, Department d) : id(did), name(n), department(d) {}
 
     // ========== ORIGINAL FEATURES ========== //
 
-    void addAppointment(int patientId){
-        appointmentQueue.push(patientId); }
+    void addAppointment(int patientId) {
+        appointmentQueue.push(patientId); 
+    }
+    
     int seePatient() {
         if (appointmentQueue.empty()) {
             return -1;
@@ -128,45 +130,41 @@ public:
         appointmentQueue.pop();
         return frontPatient;
     }
-    bool cancelAppointment(int patientId) {
-        if (appointmentQueue.empty()) return false;
-
-        queue<int> tempQueue;
-        bool found = false;
-
-        while (!appointmentQueue.empty()) {
-            int currentId = appointmentQueue.front();
-            appointmentQueue.pop();
-
-            if (currentId == patientId && !found) {
-                found = true;
-            } else {
-                tempQueue.push(currentId);
-            }
-        }
-
-        appointmentQueue = tempQueue;
-        return found;
+    
+    // Added const correctness
+    int getId() const {
+        return id; 
     }
-    int getId(){
-        return id; }
-    string getName(){
-        return name; }
-    string getDepartment(){
-           return departmentToString(department); }
+    
+    // Added const correctness
+    string getName() const {
+        return name; 
+    }
+    
+    // Fixed: Using switch statement per SRS requirements (and added const)
+    string getDepartment() const {
+        switch (department) {
+            case CARDIOLOGY: return "Cardiology";
+            case NEUROLOGY: return "Neurology";
+            case ORTHOPEDICS: return "Orthopedics";
+            case PEDIATRICS: return "Pediatrics";
+            case EMERGENCY: return "Emergency";
+            default: return "General";
+        }
+    }
+
     // ========== NEW FEATURES ========== //
 
-    // Display waiting patients
-    void displayAppointments(){
+    // Display waiting patients (Fixed output formatting and added const)
+    void displayAppointments() const {
         queue<int> tempQueue = appointmentQueue;
         while (!tempQueue.empty()) {
-            cout << tempQueue.front() << endl;
+            cout << "- Patient ID: " << tempQueue.front() << endl;
             tempQueue.pop();
         }
     }
-    
 
-    // Cancel appointment
+    // Cancel appointment (Kept the correct void version, removed the duplicate bool version)
     void cancelAppointment(int patientId) {
         if (appointmentQueue.empty()) {
             cout << "No appointments available." << endl;
@@ -196,8 +194,8 @@ public:
         }
     }
 
-    // Number of waiting patients
-    int getAppointmentCount() {
+    // Number of waiting patients (Added const)
+    int getAppointmentCount() const {
         return appointmentQueue.size();
     }
 };
