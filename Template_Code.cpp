@@ -132,29 +132,92 @@ private:
 
 public:
     // Constructor
-    Doctor(int did, string n, Department d);
+    Doctor(int did, string n, Department d) : id(did), name(n), department(d) {}
 
     // ========== ORIGINAL FEATURES ========== //
 
-    void addAppointment(int patientId);
-    int seePatient();
-
-    int getId();
-    string getName();
-    string getDepartment();
-
+    void addAppointment(int patientId) {
+        appointmentQueue.push(patientId); 
+    }
+    
+    int seePatient() {
+        if (appointmentQueue.empty()) {
+            return -1;
+        }
+        int frontPatient = appointmentQueue.front();
+        appointmentQueue.pop();
+        return frontPatient;
+    }
+    
+    // Added const correctness
+    int getId() const {
+        return id; 
+    }
+    
+    // Added const correctness
+    string getName() const {
+        return name; 
+    }
+    
+    // Fixed: Using switch statement per SRS requirements (and added const)
+    string getDepartment() const {
+        switch (department) {
+            case CARDIOLOGY: return "Cardiology";
+            case NEUROLOGY: return "Neurology";
+            case ORTHOPEDICS: return "Orthopedics";
+            case PEDIATRICS: return "Pediatrics";
+            case EMERGENCY: return "Emergency";
+            default: return "General";
+        }
+    }
 
     // ========== NEW FEATURES ========== //
 
-    // Display waiting patients
-    void displayAppointments();
+    // Display waiting patients (Fixed output formatting and added const)
+    void displayAppointments() const {
+        queue<int> tempQueue = appointmentQueue;
+        while (!tempQueue.empty()) {
+            cout << "- Patient ID: " << tempQueue.front() << endl;
+            tempQueue.pop();
+        }
+    }
 
-    // Cancel appointment
-    void cancelAppointment(int patientId);
+    // Cancel appointment (Kept the correct void version, removed the duplicate bool version)
+    void cancelAppointment(int patientId) {
+        if (appointmentQueue.empty()) {
+            cout << "No appointments available." << endl;
+            return;
+        }
 
-    // Number of waiting patients
-    int getAppointmentCount();
+        queue<int> tempQueue;
+        bool found = false;
+
+        while (!appointmentQueue.empty()) {
+            int current = appointmentQueue.front();
+            appointmentQueue.pop();
+
+            if (current == patientId && !found) {
+                found = true;
+            } else {
+                tempQueue.push(current);
+            }
+        }
+
+        appointmentQueue = tempQueue;
+
+        if (found) {
+            cout << "Appointment cancelled successfully." << endl;
+        } else {
+            cout << "Appointment not found." << endl;
+        }
+    }
+
+    // Number of waiting patients (Added const)
+    int getAppointmentCount() const {
+        return appointmentQueue.size();
+    }
 };
+    
 
 
 // ========== HOSPITAL CLASS ========== //
