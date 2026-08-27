@@ -243,9 +243,9 @@ public:
     // ========== ORIGINAL FEATURES ========== //
 
     void addAppointment(int patientId) {
-        appointmentQueue.push(patientId); 
+        appointmentQueue.push(patientId);
     }
-    
+
     int seePatient() {
         if (appointmentQueue.empty()) {
             return -1;
@@ -254,17 +254,17 @@ public:
         appointmentQueue.pop();
         return frontPatient;
     }
-    
+
     // Added const correctness
     int getId() const {
-        return id; 
+        return id;
     }
-    
+
     // Added const correctness
     string getName() const {
-        return name; 
+        return name;
     }
-    
+
     // Fixed: Using switch statement per SRS requirements (and added const)
     string getDepartment() const {
         switch (department) {
@@ -323,7 +323,7 @@ public:
         return appointmentQueue.size();
     }
 };
-    
+
 
 
 // ========== HOSPITAL CLASS ========== //
@@ -355,7 +355,14 @@ private:
 public:
 
     // Constructor
-    Hospital();
+    Hospital(){
+        patientCounter = 1;
+        doctorCounter = 1;
+        generalRooms = 20;
+        icuRooms = 5;
+        privateRooms = 10;
+        semiPrivateRooms = 10;
+    }
 
 
     // =====================================================
@@ -591,6 +598,79 @@ public:
 
     void displayStatistics();
 };
+// ========== HOSPITAL: CORE SETUP & REGISTRATION ========== //
+
+
+// 1. Register Patient
+int Hospital::registerPatient(string name, int age, string contact) {
+    int id = patientCounter++;
+    patients.push_back(Patient(id, name, age, contact));
+    return id;
+}
+
+// 2. Add Doctor
+int Hospital::addDoctor(string name, Department dept) {
+    int id = doctorCounter++;
+    doctors.push_back(Doctor(id, name, dept));
+    return id;
+}
+
+// 3. Admit Patient
+void Hospital::admitPatient(int patientId, RoomType type) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+
+    if (!isRoomAvailable(type)) {
+        cout << "No room available for this room type." << endl;
+        return;
+    }
+
+    pat->admitPatient(type);
+}
+
+// ========== HELPER SEARCH METHODS ========== //
+
+Patient* Hospital::findPatient(int patientId) {
+    for (auto& patient : patients) {
+        if (patient.getId() == patientId) {
+            return &patient;
+        }
+    }
+    return nullptr;
+}
+
+Doctor* Hospital::findDoctor(int doctorId) {
+    for (auto& doctor : doctors) {
+        if (doctor.getId() == doctorId) {
+            return &doctor;
+        }
+    }
+    return nullptr;
+}
+
+// ========== ROOM MANAGEMENT LOGIC ========== //
+
+bool Hospital::isRoomAvailable(RoomType type) {
+    switch (type) {
+        case GENERAL_WARD: return generalRooms > 0;
+        case ICU:          return icuRooms > 0;
+        case PRIVATE_ROOM: return privateRooms > 0;
+        case SEMI_PRIVATE: return semiPrivateRooms > 0;
+        default:           return false;
+    }
+}
+
+void Hospital::displayRoomStatus() {
+    cout << "========== ROOM STATUS ==========" << endl;
+    cout << "General Ward: " << generalRooms << endl;
+    cout << "ICU: " << icuRooms << endl;
+    cout << "Private Rooms: " << privateRooms << endl;
+    cout << "Semi Private Rooms: " << semiPrivateRooms << endl;
+}
+
 
 // ========== HOSPITAL: APPOINTMENT ROUTING ========== //
 
