@@ -243,9 +243,9 @@ public:
     // ========== ORIGINAL FEATURES ========== //
 
     void addAppointment(int patientId) {
-        appointmentQueue.push(patientId); 
+        appointmentQueue.push(patientId);
     }
-    
+
     int seePatient() {
         if (appointmentQueue.empty()) {
             return -1;
@@ -254,17 +254,17 @@ public:
         appointmentQueue.pop();
         return frontPatient;
     }
-    
+
     // Added const correctness
     int getId() const {
-        return id; 
+        return id;
     }
-    
+
     // Added const correctness
     string getName() const {
-        return name; 
+        return name;
     }
-    
+
     // Fixed: Using switch statement per SRS requirements (and added const)
     string getDepartment() const {
         switch (department) {
@@ -323,7 +323,7 @@ public:
         return appointmentQueue.size();
     }
 };
-    
+
 
 
 // ========== HOSPITAL CLASS ========== //
@@ -688,6 +688,161 @@ int Hospital::handlePriorityEmergency() {
          << " with severity " << top.getSeverity() << endl;
 
     return top.getPatientId();
+}
+
+// ========== HOSPITAL: SEARCH & PROFILE DISPLAY ========== //
+
+void Hospital::searchPatientByName(string name) {
+    bool found = false;
+    for (Patient& p : patients) {
+        if (p.getName() == name) {
+            cout << "Patient Found:" << endl;
+            cout << "ID: " << p.getId() << endl;
+            cout << "Name: " << p.getName() << endl;
+            cout << "Age: " << p.getAge() << endl;
+            cout << "Contact: " << p.getContact() << endl;
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Patient not found." << endl;
+    }
+}
+
+void Hospital::displayPatientInfo(int patientId) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    cout << "Patient Information:" << endl;
+    cout << "ID: " << pat->getId() << endl;
+    cout << "Name: " << pat->getName() << endl;
+    cout << "Admission Status: " << (pat->getAdmissionStatus() ? "Admitted" : "Not Admitted") << endl;
+    cout << "Medical History for " << pat->getName() << " (ID: " << pat->getId() << "):" << endl;
+    pat->displayHistory();
+}
+
+void Hospital::displayDoctorInfo(int doctorId) {
+    Doctor* doc = findDoctor(doctorId);
+    if (doc == nullptr) {
+        cout << "Doctor with ID " << doctorId << " not found." << endl;
+        return;
+    }
+    cout << "Doctor Information:" << endl;
+    cout << "ID: " << doc->getId() << endl;
+    cout << "Name: " << doc->getName() << endl;
+    cout << "Department: " << doc->getDepartment() << endl;
+}
+
+
+// ========== HOSPITAL: PATIENT CARE DELEGATION ========== //
+
+void Hospital::requestPatientTest(int patientId, string testName) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    pat->requestTest(testName);
+    cout << "Test requested successfully." << endl;
+}
+
+void Hospital::performPatientTest(int patientId) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    string testName = pat->performTest();
+    if (testName != "No tests pending") {
+        cout << "Test result/action: " << testName << endl;
+    } else {
+        cout << testName << endl;
+    }
+}
+
+void Hospital::displayPatientTests(int patientId) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    cout << "Pending Tests:" << endl;
+    pat->displayPendingTests();
+}
+
+void Hospital::prescribeMedicine(int patientId, string medicine) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    pat->addPrescription(medicine);
+    cout << "Medicine prescribed successfully." << endl;
+}
+
+void Hospital::displayPrescriptions(int patientId) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    cout << "Prescriptions:" << endl;
+    pat->displayPrescriptions();
+}
+
+void Hospital::displayPatientBill(int patientId) {
+    Patient* pat = findPatient(patientId);
+    if (pat == nullptr) {
+        cout << "Patient with ID " << patientId << " not found." << endl;
+        return;
+    }
+    pat->displayBill();
+}
+
+
+// ========== HOSPITAL: HOSPITAL-WIDE REPORTING ========== //
+
+void Hospital::displayAllPatients() {
+    cout << "========== ALL PATIENTS ==========" << endl;
+    for (Patient& p : patients) {
+        cout << "ID: " << p.getId()
+             << " | Name: " << p.getName()
+             << " | Age: " << p.getAge()
+             << " | Status: " << (p.getAdmissionStatus() ? "Admitted" : "Not Admitted") << endl;
+    }
+}
+
+void Hospital::displayAllDoctors() {
+    cout << "========== ALL DOCTORS ==========" << endl;
+    for (Doctor& d : doctors) {
+        cout << "ID: " << d.getId()
+             << " | Name: " << d.getName()
+             << " | Department: " << d.getDepartment()
+             << " | Appointments: " << d.getAppointmentCount() << endl;
+    }
+}
+
+void Hospital::displayStatistics() {
+    int admittedCount = 0;
+    double totalBills = 0.0;
+
+    for (Patient& p : patients) {
+        if (p.getAdmissionStatus()) {
+            admittedCount++;
+        }
+        totalBills += p.getBill();
+    }
+
+    cout << "========== HOSPITAL STATISTICS ==========" << endl;
+    cout << "Total Patients: " << patients.size() << endl;
+    cout << "Total Doctors: " << doctors.size() << endl;
+    cout << "Admitted Patients: " << admittedCount << endl;
+    cout << "Waiting Emergencies: " << emergencyQueue.size() << endl;
+    cout << "Priority Emergencies: " << priorityEmergencyQueue.size() << endl;
+    cout << "Total Generated Bills: $" << totalBills << endl;
+    cout << "=========================================" << endl;
 }
 
 
